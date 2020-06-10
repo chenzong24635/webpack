@@ -1,23 +1,22 @@
 <template>
-  <div class="container">
-    {{name}}
+  <div class="bgc">
+    <p>{{name}}</p>
     <ul>
       <li v-for="item in lists" :key="item">{{item}}</li>
     </ul>
-    <button @click="add">add</button>
+    <div class="bgc">ddffa</div>
+    <!-- <img src="./assets/images/moto.jpg" alt=""> -->
+    <button @click="add">d</button>
   </div>
 </template>
 <script>
 export default {
-  name: '',
-  components: {},
   data () {
     return {
-      name: '34',
+      name: '344',
       lists: [1,2,3]
     }
   },
-  created () {},
   methods: {
     add() {
       this.lists.push(this.lists.length+1)
@@ -25,8 +24,14 @@ export default {
   }
 }
 </script>
-<style >
+<style scoped lang="less">
+@import 'css/index1.less';
+@import 'css/main.less';
+</style>
+
+<style scoped lang="less">
 .container{
-  background: red;
+  background: gold;
+  height: 600px;
 }
 </style>

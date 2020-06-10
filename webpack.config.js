@@ -1,3 +1,5 @@
+//所有配置
+
 const path = require('path');
 function resolve(dir) {
   return path.resolve(__dirname, dir)
@@ -5,55 +7,64 @@ function resolve(dir) {
 
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin }  = require('clean-webpack-plugin');
-// const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const webpack = require('webpack');
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const SpeedMeasurePlugin = require('speed-measure-webpack-plugin')
 const smp = new SpeedMeasurePlugin()
+
+const webpack = require('webpack');
+const Dotenv = require('dotenv-webpack');
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
+const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin')
+console.log('+++++++++++',process.env.NODE_ENV);
+
+const mode = process.env.NODE_ENV
+const isProd = mode === 'production'
 
 module.exports = {
-  entry: './src/main.js',  // 入口文件的配置项
+  // entry: resolve('./src/index.js'),
+  entry: [// 入口文件的配置项
+    "@babel/polyfill",
+    resolve('./src/main.js')
+  ],
   output: {  // 出口文件的配置
     // filename: 'js/bundle.js', // 输出文件名
-    filename: 'js/[name].[hash:6].js',   //添加了hash值, 实现静态资源的长期缓存
+    filename: 'js/[name].[hash:8].js',   //添加了hash值, 实现静态资源的长期缓存
     path: resolve('dist') //输出文件路径配置
   },
   module: {
     rules: [
       {
-        test: /\.css$/,
+        test: /\.(css|less)$/,
+        include: resolve("./src"),
         use: [
-          // {
-          //   loader: MiniCssExtractPlugin.loader,
-          //   options: {
-          //     // you can specify a publicPath here
-          //     // by default it use publicPath in webpackOptions.output
-          //     publicPath: '../'
-          //   }
-          // },
-          // MiniCssExtractPlugin.loader,
-          'style-loader',
+          // MiniCssExtractPlugin.loader, // 生产模式使用， 分离css 文件
+          // 'style-loader', //开发使用
+          isProd ? MiniCssExtractPlugin.loader : 'vue-style-loader',
           {
             loader: 'css-loader',
             options: {
-              // modules: true,
-              // sourceMap: true
+              sourceMap: true
             }
           },
+          'postcss-loader', //注意顺序，必须在less-loader解析后
+          // { //或者新建 postcss.config.js 定义
+          //   loader:'postcss-loader',
+          //   options:{
+          //     plugins:[require('autoprefixer')]
+          //   }
+          // }
           'less-loader',
-          'postcss-loader'
         ]
-      },
+      },     
       {
         test: /\.(png|jpg|svg|gif)$/,
-        // use: ['file-loader']
         use: [{
           loader: 'file-loader',
           options: {
-            name: '[name]_[hash:6].[ext]', //文件名,取hash值前6位，ext自动补全文件扩展名
+            name: '[name]_[hash:8].[ext]', //文件名,取hash值前8位，ext自动补全文件扩展名
             outputPath: 'images/',   //在output基础上，修改输出图片文件的位置
-            publicPath: '../dist/images/'  //修改背景图引入url的路径
+            publicPath: './dist/images/'  //修改背景图引入url的路径
           }
         }]
         // use: [{
@@ -76,36 +87,63 @@ module.exports = {
         test:/\.vue$/, 
         use:['vue-loader'] // 解析.vue文件
       },
+      {
+        test:/\.js$/,
+        use:{
+          loader:'babel-loader', // babel-loader只会将 ES6/7/8语法转换为ES5语法,需配合babel-polyfill
+          options:{
+            presets:['@babel/preset-env']
+          }
+        },
+        exclude:/node_modules/
+      },
     ]
-  },
-  resolve:{
-    alias:{
-      'vue$':'vue/dist/vue.runtime.esm.js',
-      ' @': resolve(__dirname,'./src')
-    },
-    extensions:['*','.js','.json','.vue']
   },
   plugins: [
     new HtmlWebpackPlugin({ //输出html文件
       title: '标题',
       template: './public/index.html'
     }),
-    // new CleanWebpackPlugin(), // 清理dist文件夹
-    // new MiniCssExtractPlugin({
-    //   filename: "css/[name].[hash:8].css",
-    //   chunkFilename: "css/[id].[hash:8].css"
-    // }),
-    // new webpack.NamedModulesPlugin(), 
-    new webpack.HotModuleReplacementPlugin(),
-    // new SpeedMeasurePlugin(),
+    new CleanWebpackPlugin(), // 清理dist文件夹
+    new MiniCssExtractPlugin({ // css文件分离
+      filename: "css/[name].[hash:8].css",
+      chunkFilename: "css/[id].[hash:8].css"
+    }),
+    new OptimizeCssAssetsPlugin({ // css压缩
+      assetNameRegExp: /\.css$/g,  //应优化/最小化的资产的名称
+      cssProcessor: require("cssnano"), //用于优化\最小化CSS的CSS处理器，默认为cssnano
+      cssProcessorOptions: {
+        safe: true,
+        discardComments: { removeAll: true },
+      },
+      canPrint: true //一个布尔值，指示插件是否可以将消息打印到控制台，默认为true
+    }),
+    new webpack.NamedModulesPlugin(), // 在热加载时直接返回更新文件名，而不是文件的id
+    new webpack.HotModuleReplacementPlugin(), // 热加载
     // new BundleAnalyzerPlugin(), //可视化依赖体积
-    new VueLoaderPlugin()
+    new VueLoaderPlugin(),
+    new Dotenv({
+      path: resolve(`./.env.${mode}`)
+    })
   ],
+  resolve:{
+    //查找第三方依赖, 减少查找过程
+    modules: [resolve("./node_modules")],
+    //起别名
+    alias:{ 
+      'vue$':'vue/dist/vue.runtime.esm.js',
+      ' @': resolve('./src')
+    },
+    extensions:['*','.js','.json','.vue']
+  },
+  externals: { // 外部扩展
+    //jquery通过script引入之后，全局中即有了 jQuery 变量
+    lodash: "_",
+  },
   devServer: {
     contentBase: './dist',
     hot: true,
-    // historyApiFallback: true 
   },
   devtool: 'inline-source-map',
-  mode: 'development'   //开发环境development | 生产环境production
+  mode   //开发环境development | 生产环境production (默认值) | none
 }

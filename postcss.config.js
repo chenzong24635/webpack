@@ -2,14 +2,20 @@
 module.exports = {
   plugins : [
     require('autoprefixer')({
-      browsers : ['last 2 versions'], //必须设置支持的浏览器才会自动添加添加浏览器兼容
+      //必须设置支持的浏览器才会自动添加添加浏览器兼容
+      overrideBrowserslist : [  
+        'last 2 version',
+        '> 0.2%',
+        'maintained node versions',
+        'not dead',
+        '> 0.2% in CN'
+      ],
       grid: 'autoplace' // 启用 grid 前缀
     })
   ]
   // plugins: {
   //   autoprefixer: {
-  //     browsers: ['last 2 versions']
-  //     // browsers: [' > 0.15% in CN ']
+  //     overrideBrowserslist: ['last 2 versions']
   //   }
   //   // autoprefixer: [
   //   //   "ie >= 8",
