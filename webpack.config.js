@@ -5,18 +5,18 @@ function resolve(dir) {
   return path.resolve(__dirname, dir)
 }
 
+const webpack = require('webpack');
+const Dotenv = require('dotenv-webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin }  = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin')
+const TerserPlugin = require('terser-webpack-plugin')
+const VueLoaderPlugin = require('vue-loader/lib/plugin')
+
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const SpeedMeasurePlugin = require('speed-measure-webpack-plugin')
 const smp = new SpeedMeasurePlugin()
-
-const webpack = require('webpack');
-const Dotenv = require('dotenv-webpack');
-const VueLoaderPlugin = require('vue-loader/lib/plugin')
-const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin')
-console.log('+++++++++++',process.env.NODE_ENV);
 
 const mode = process.env.NODE_ENV
 const isProd = mode === 'production'
@@ -30,7 +30,7 @@ module.exports = {
   output: {  // 出口文件的配置
     // filename: 'js/bundle.js', // 输出文件名
     filename: 'js/[name].[hash:8].js',   //添加了hash值, 实现静态资源的长期缓存
-    path: resolve('dist') //输出文件路径配置
+    path: resolve('dist') //输出文件路径，必须是绝对路径
   },
   module: {
     rules: [
@@ -40,7 +40,13 @@ module.exports = {
         use: [
           // MiniCssExtractPlugin.loader, // 生产模式使用， 分离css 文件
           // 'style-loader', //开发使用
-          isProd ? MiniCssExtractPlugin.loader : 'vue-style-loader',
+          // MiniCssExtractPlugin.loader : 'vue-style-loader',
+          isProd ? {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+                publicPath: '../', //修改css文件引入图片的路径
+            }
+          } : 'vue-style-loader',
           {
             loader: 'css-loader',
             options: {
@@ -54,7 +60,7 @@ module.exports = {
           //     plugins:[require('autoprefixer')]
           //   }
           // }
-          'less-loader',
+          'less-loader'
         ]
       },     
       {
@@ -62,9 +68,10 @@ module.exports = {
         use: [{
           loader: 'file-loader',
           options: {
+            esModule: false, //启用CommonJS模块语法
             name: '[name]_[hash:8].[ext]', //文件名,取hash值前8位，ext自动补全文件扩展名
-            outputPath: 'images/',   //在output基础上，修改输出图片文件的位置
-            publicPath: './dist/images/'  //修改背景图引入url的路径
+            outputPath: 'images/', //在output基础上，修改输出图片文件的位置
+            // publicPath: '', //修改图片引入的路径
           }
         }]
         // use: [{
@@ -79,7 +86,7 @@ module.exports = {
         use: [{
           loader: 'url-loader',
           options: {
-            limit: 2 * 1024,
+            limit: 2 * 1024
           }
         }]
       },
@@ -114,7 +121,7 @@ module.exports = {
       cssProcessor: require("cssnano"), //用于优化\最小化CSS的CSS处理器，默认为cssnano
       cssProcessorOptions: {
         safe: true,
-        discardComments: { removeAll: true },
+        discardComments: { removeAll: true }
       },
       canPrint: true //一个布尔值，指示插件是否可以将消息打印到控制台，默认为true
     }),
@@ -126,6 +133,22 @@ module.exports = {
       path: resolve(`./.env.${mode}`)
     })
   ],
+  optimization: {
+    minimize: true,
+    minimizer: [
+      new TerserPlugin({
+        test: /\.js(\?.*)?$/i,
+        parallel: true, // 多进程并行运行可提高构建速度,可设置并发运行次数 (Boolean | Number) 
+        cache: true, // 文件缓存
+        sourceMap: true,
+        // terserOptions: {
+        //   compress: {
+        //     pure_funcs: ["console.log"] //去除console.log
+        //   }
+        // }
+      })
+    ]
+  },
   resolve:{
     //查找第三方依赖, 减少查找过程
     modules: [resolve("./node_modules")],
@@ -137,7 +160,7 @@ module.exports = {
     extensions:['*','.js','.json','.vue']
   },
   externals: { // 外部扩展
-    //jquery通过script引入之后，全局中即有了 jQuery 变量
+    //lodash通过script引入之后，全局中即有了 _ 变量
     lodash: "_",
   },
   devServer: {

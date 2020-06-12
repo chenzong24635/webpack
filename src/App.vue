@@ -1,12 +1,13 @@
 <template>
   <div class="bgc">
-    <p>{{name}}</p>
+    <p class="base">{{name}}</p>
     <ul>
       <li v-for="item in lists" :key="item">{{item}}</li>
     </ul>
-    <div class="bgc">ddffa</div>
-    <!-- <img src="./assets/images/moto.jpg" alt=""> -->
     <button @click="add">d</button>
+    <div class="bgc">ddffa</div>
+    <div class="img"></div>
+    <img src="./assets/images/moto.jpg" alt="">
   </div>
 </template>
 <script>
@@ -17,6 +18,9 @@ export default {
       lists: [1,2,3]
     }
   },
+  created() {
+    console.log(111);
+  },
   methods: {
     add() {
       this.lists.push(this.lists.length+1)
@@ -26,6 +30,7 @@ export default {
 </script>
 <style scoped lang="less">
 @import 'css/index1.less';
+@import 'css/base.less';
 @import 'css/main.less';
 </style>
 
