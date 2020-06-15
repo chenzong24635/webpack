@@ -1,5 +1,6 @@
 <template>
   <div class="bgc">
+    xxxxx
     <p class="base">{{name}}</p>
     <ul>
       <li v-for="item in lists" :key="item">{{item}}</li>
@@ -7,6 +8,7 @@
     <button @click="add">d</button>
     <div class="bgc">ddffa</div>
     <div class="img"></div>
+    <img src="./assets/images/moto.jpg" alt="">
     <img src="./assets/images/moto.jpg" alt="">
   </div>
 </template>

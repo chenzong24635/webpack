@@ -25,12 +25,12 @@ module.exports = {
   // entry: resolve('./src/index.js'),
   entry: [// 入口文件的配置项
     "@babel/polyfill",
-    resolve('./src/main.js')
+    resolve('./src/main.js'),
   ],
   output: {  // 出口文件的配置
     // filename: 'js/bundle.js', // 输出文件名
     filename: 'js/[name].[hash:8].js',   //添加了hash值, 实现静态资源的长期缓存
-    path: resolve('dist') //输出文件路径，必须是绝对路径
+    path: resolve('dist'), //输出文件路径，必须是绝对路径
   },
   module: {
     rules: [
@@ -50,8 +50,8 @@ module.exports = {
           {
             loader: 'css-loader',
             options: {
-              sourceMap: true
-            }
+              sourceMap: true,
+            },
           },
           'postcss-loader', //注意顺序，必须在less-loader解析后
           // { //或者新建 postcss.config.js 定义
@@ -60,8 +60,8 @@ module.exports = {
           //     plugins:[require('autoprefixer')]
           //   }
           // }
-          'less-loader'
-        ]
+          'less-loader',
+        ],
       },     
       {
         test: /\.(png|jpg|svg|gif)$/,
@@ -72,8 +72,8 @@ module.exports = {
             name: '[name]_[hash:8].[ext]', //文件名,取hash值前8位，ext自动补全文件扩展名
             outputPath: 'images/', //在output基础上，修改输出图片文件的位置
             // publicPath: '', //修改图片引入的路径
-          }
-        }]
+          },
+        }],
         // use: [{
         //   loader: 'url-loader',
         //   options: {
@@ -86,52 +86,52 @@ module.exports = {
         use: [{
           loader: 'url-loader',
           options: {
-            limit: 2 * 1024
-          }
-        }]
+            limit: 2 * 1024,
+          },
+        }],
       },
       {
         test:/\.vue$/, 
-        use:['vue-loader'] // 解析.vue文件
+        use:['vue-loader'], // 解析.vue文件
       },
       {
         test:/\.js$/,
         use:{
           loader:'babel-loader', // babel-loader只会将 ES6/7/8语法转换为ES5语法,需配合babel-polyfill
           options:{
-            presets:['@babel/preset-env']
-          }
+            presets:['@babel/preset-env'],
+          },
         },
-        exclude:/node_modules/
+        exclude:/node_modules/,
       },
     ]
   },
   plugins: [
     new HtmlWebpackPlugin({ //输出html文件
       title: '标题',
-      template: './public/index.html'
+      template: './public/index.html',
     }),
     new CleanWebpackPlugin(), // 清理dist文件夹
     new MiniCssExtractPlugin({ // css文件分离
       filename: "css/[name].[hash:8].css",
-      chunkFilename: "css/[id].[hash:8].css"
+      chunkFilename: "css/[id].[hash:8].css",
     }),
     new OptimizeCssAssetsPlugin({ // css压缩
       assetNameRegExp: /\.css$/g,  //应优化/最小化的资产的名称
       cssProcessor: require("cssnano"), //用于优化\最小化CSS的CSS处理器，默认为cssnano
       cssProcessorOptions: {
         safe: true,
-        discardComments: { removeAll: true }
+        discardComments: { removeAll: true },
       },
-      canPrint: true //一个布尔值，指示插件是否可以将消息打印到控制台，默认为true
+      canPrint: true, // 一个布尔值，指示插件是否可以将消息打印到控制台，默认为true
     }),
     new webpack.NamedModulesPlugin(), // 在热加载时直接返回更新文件名，而不是文件的id
     new webpack.HotModuleReplacementPlugin(), // 热加载
-    // new BundleAnalyzerPlugin(), //可视化依赖体积
+    // new BundleAnalyzerPlugin(), // 可视化依赖体积
     new VueLoaderPlugin(),
     new Dotenv({
-      path: resolve(`./.env.${mode}`)
-    })
+      path: resolve(`./.env.${mode}`),
+    }),
   ],
   optimization: {
     minimize: true,
@@ -146,8 +146,8 @@ module.exports = {
         //     pure_funcs: ["console.log"] //去除console.log
         //   }
         // }
-      })
-    ]
+      }),
+    ],
   },
   resolve:{
     //查找第三方依赖, 减少查找过程
@@ -155,9 +155,9 @@ module.exports = {
     //起别名
     alias:{ 
       'vue$':'vue/dist/vue.runtime.esm.js',
-      ' @': resolve('./src')
+      ' @': resolve('./src'),
     },
-    extensions:['*','.js','.json','.vue']
+    extensions:['*','.js','.json','.vue'],
   },
   externals: { // 外部扩展
     //lodash通过script引入之后，全局中即有了 _ 变量

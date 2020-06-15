@@ -2,8 +2,8 @@ import base from "./css/base.less";
 import css from "./css/index1.less";
 import main from "./css/main.less";
 import css1 from "./css/index.css";
-import printMe from './print.js'
-printMe()
+import {a,b} from './print.js'
+a()
 console.log('+++++++++++',process.env.NODE_ENV);
 
 // console.log(new Set(1));

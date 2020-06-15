@@ -1,7 +1,8 @@
 import Vue from 'vue'
 import App from './app'
 // import 'css/base.less'
-
+import {a,b} from './print.js'
+a()
 let name = 'tom'
 // console.log(`i am ${name}`);
 // console.log(new Set([1]));
