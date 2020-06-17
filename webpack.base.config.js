@@ -10,8 +10,11 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 const HappyPack = require("happypack");
+const os = require('os'); // 系统操作函数
 // 创建 happypack 共享进程池，其中包含 6 个子进程
 const happyThreadPool = HappyPack.ThreadPool({ size: 6 });
+console.log(os.cpus().length);
+// const happyThreadPool = HappyPack.ThreadPool({size: os.cpus().length}); // 指定线程池个数
 
 const mode = process.env.NODE_ENV
 const isProd = mode === 'production'
@@ -79,7 +82,7 @@ module.exports = {
         test:/\.js$/,
         exclude: /node_modules/,
         use:{
-          loader:'babel-loader', // babel-loader只会将 ES6/7/8语法转换为ES5语法,需配合babel-polyfill
+          loader:'babel-loader?cacheDirectory=true', // babel-loader只会将 ES6/7/8语法转换为ES5语法,需配合babel-polyfill
           options:{
             presets:['@babel/preset-env'],
           },
@@ -89,14 +92,14 @@ module.exports = {
   },
   plugins:[
     new HtmlWebpackPlugin({ //输出html文件
-      title: '标题',
+      title: '标题000',
       template: './public/index.html',
     }),
     new webpack.NamedModulesPlugin(), // 在热加载时直接返回更新文件名，而不是文件的id
     new VueLoaderPlugin(),
   ],
   resolve:{
-    //查找第三方依赖, 减少查找过程
+    //优化模块查找路径
     modules: [resolve("./node_modules")],
     //起别名
     alias:{ 
