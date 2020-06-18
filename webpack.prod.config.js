@@ -14,6 +14,10 @@ const { CleanWebpackPlugin }  = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin')
 const TerserPlugin = require('terser-webpack-plugin')
+const CompressionWebpackPlugin = require("compression-webpack-plugin");
+// 可加入需要的其他文件类型，比如json
+// 图片不要压缩，体积会比原来还大
+const productionGzipExtensions = ["js", "css"];
 
 const PurifyCSS = require('purifycss-webpack')
 const glob = require('glob-all')
@@ -33,6 +37,14 @@ module.exports = webpackMerge(baseConfig,{
     new MiniCssExtractPlugin({ // css文件分离
       filename: "css/[name].[hash:8].css",
       chunkFilename: "css/[id].[hash:8].css",
+    }),
+    new CompressionWebpackPlugin({ // gzip压缩
+      filename: '[path].gz[query]',
+      algorithm: 'gzip',
+      test: /\.(js|css|json|txt|html|ico|svg)(\?.*)?$/i, // 匹配文件名
+      threshold: 10240, // 对超过 10*1024 的数据进行压缩
+      minRatio: 0.8, // 压缩比例，值为0 ~ 1
+      deleteOriginalAssets: false // 是否删除原文件
     }),
     new OptimizeCssAssetsPlugin({ // css压缩
       assetNameRegExp: /\.css$/g,  //应优化/最小化的资产的名称
@@ -64,12 +76,12 @@ module.exports = webpackMerge(baseConfig,{
         test: /\.js(\?.*)?$/i,
         parallel: true, // 多进程并行运行可提高构建速度,可设置并发运行次数 (Boolean | Number) 
         cache: true, // 文件缓存
-        sourceMap: true
-        // terserOptions: {
-        //   compress: {
-        //     // pure_funcs: ["console.log"], //去除console.log
-        //   },
-        // },
+        sourceMap: true,
+        terserOptions: {
+          compress: {
+            pure_funcs: ["console.log"], // 去除console.log
+          },
+        },
       }),
     ],
   },

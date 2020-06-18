@@ -110,6 +110,13 @@ module.exports = {
     new HtmlWebpackPlugin({ //输出html文件
       title: '标题',
       template: './public/index.html',
+      minify: {
+        // 压缩HTML文件
+        removeComments: true, // 移除HTML中的注释
+        collapseWhitespace: true, // 删除空白符与换行符
+        minifyCSS: true, // 压缩内联css
+      },
+      inject: 'head',
     }),
     new CleanWebpackPlugin(), // 清理dist文件夹
     new MiniCssExtractPlugin({ // css文件分离

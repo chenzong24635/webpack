@@ -55,13 +55,13 @@ module.exports = {
         test: /\.(png|jpg|svg|gif)$/,
         exclude: /node_modules/,
         use: [{
-            loader: 'file-loader',
-            options: {
-              esModule: false, //启用CommonJS模块语法
-              name: '[name]_[hash:8].[ext]', //文件名,取hash值前8位，ext自动补全文件扩展名
-              outputPath: 'images/', //在output基础上，修改输出图片文件的位置
-            },
-          }],
+          loader: 'file-loader',
+          options: {
+            esModule: false, //启用CommonJS模块语法
+            name: '[name]_[hash:8].[ext]', //文件名,取hash值前8位，ext自动补全文件扩展名
+            outputPath: 'images/', //在output基础上，修改输出图片文件的位置
+          },
+        }],
       },
       {
         test: /\.(woff|woff2|eot|ttf|otf)$/,
@@ -94,8 +94,16 @@ module.exports = {
     new HtmlWebpackPlugin({ //输出html文件
       title: '标题000',
       template: './public/index.html',
+      minify: {
+        // 压缩HTML文件
+        removeComments: true, // 移除HTML中的注释
+        collapseWhitespace: true, // 删除空白符与换行符
+        minifyCSS: true, // 压缩内联css
+      },
+      inject: true,
     }),
     new webpack.NamedModulesPlugin(), // 在热加载时直接返回更新文件名，而不是文件的id
+    new webpack.NoEmitOnErrorsPlugin(), // 报错但不退出 webpack 进程
     new VueLoaderPlugin(),
   ],
   resolve:{
