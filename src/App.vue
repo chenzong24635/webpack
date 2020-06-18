@@ -9,7 +9,7 @@
     <div class="bgc">ddffa</div>
     <div class="img"></div>
     <img src="./assets/images/moto.jpg" alt="">
-    <img src="./assets/images/moto.jpg" alt="">
+    <img src="./assets/images/a.png" alt="">
   </div>
 </template>
 <script>

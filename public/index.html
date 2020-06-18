@@ -10,9 +10,17 @@
   </style>
 </head>
 <body>
-  <div id="app"></div>
+  <div id="app">
+    <p>4343</p>
+    <button id="btn">dad</button>
+  </div>
+  <script src="dll/vendor.dll.js"></script>
   <script src="//cdn.bootcss.com/vue/2.6.11/vue.min.js"></script>
   <script>
+    let btn = document.querySelector('#btn')
+    btn.addEventListener('click',function(){
+      console.log(1111);
+    })
   </script>
 </body>
 </html>

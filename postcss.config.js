@@ -13,14 +13,4 @@ module.exports = {
       grid: 'autoplace' // 启用 grid 前缀
     })
   ]
-  // plugins: {
-  //   autoprefixer: {
-  //     overrideBrowserslist: ['last 2 versions']
-  //   }
-  //   // autoprefixer: [
-  //   //   "ie >= 8",
-  //   //   "ff >= 30",
-  //   //   "chrome >= 34"
-  //   // ]
-  // }
 }

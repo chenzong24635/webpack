@@ -12,6 +12,7 @@ const Dotenv = require('dotenv-webpack');
 
 const { CleanWebpackPlugin }  = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin')
 const TerserPlugin = require('terser-webpack-plugin')
 const CompressionWebpackPlugin = require("compression-webpack-plugin");
@@ -35,8 +36,20 @@ module.exports = webpackMerge(baseConfig,{
   plugins: [
     new CleanWebpackPlugin(), // 清理dist文件夹
     new MiniCssExtractPlugin({ // css文件分离
-      filename: "css/[name].[hash:8].css",
-      chunkFilename: "css/[id].[hash:8].css",
+      filename: "css/[name].[contenthash:8].css",
+      // chunkFilename: "css/[id].[hash:8].css",
+    }),
+    new Webpack.DllReferencePlugin({
+      context: __dirname,
+      manifest: require('./vendor-manifest.json')
+    }),
+    new CopyWebpackPlugin({ // 拷贝生成的文件到dist目录 这样每次不必手动去cv
+      patterns: [
+        {
+          from: 'public/dll', // 被拷贝文件位置
+          to:'dll', // 输出文件的位置
+        },
+      ],
     }),
     new CompressionWebpackPlugin({ // gzip压缩
       filename: '[path].gz[query]',

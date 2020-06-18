@@ -7,13 +7,13 @@ function resolve(dir) {
 const webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 const HappyPack = require("happypack");
 const os = require('os'); // 系统操作函数
 // 创建 happypack 共享进程池，其中包含 6 个子进程
 const happyThreadPool = HappyPack.ThreadPool({ size: 6 });
-console.log(os.cpus().length);
 // const happyThreadPool = HappyPack.ThreadPool({size: os.cpus().length}); // 指定线程池个数
 
 const mode = process.env.NODE_ENV
@@ -35,7 +35,7 @@ module.exports = {
         include: resolve("./src"),
         exclude: /node_modules/,
         use: [
-          isProd ? { // 生产模式使用， 分离css 文件
+          isProd ? { // 生产模式使用， 将所有的css样式合并为一个css文件
             loader: MiniCssExtractPlugin.loader,
             options: {
                 publicPath: '../', //修改css文件引入图片的路径
@@ -54,14 +54,22 @@ module.exports = {
       {
         test: /\.(png|jpg|svg|gif)$/,
         exclude: /node_modules/,
-        use: [{
-          loader: 'file-loader',
-          options: {
-            esModule: false, //启用CommonJS模块语法
-            name: '[name]_[hash:8].[ext]', //文件名,取hash值前8位，ext自动补全文件扩展名
-            outputPath: 'images/', //在output基础上，修改输出图片文件的位置
-          },
-        }],
+        use: [
+          {
+            loader: 'url-loader',
+            options: {
+              limit: 10*1024, //如果文件小于限制的大小。则会返回 base64 编码，否则使用 file-loader 将文件移动到输出的目录中
+              esModule: false, //启用CommonJS模块语法
+              fallback: {
+                loader: 'file-loader',
+                options: {
+                  name: '[name]_[hash:8].[ext]', //文件名,取hash值前8位，ext自动补全文件扩展名
+                  outputPath: 'images/', //在output基础上，修改输出图片文件的位置
+                }
+              }
+            }
+          }
+        ],
       },
       {
         test: /\.(woff|woff2|eot|ttf|otf)$/,

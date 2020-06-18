@@ -21,7 +21,7 @@ const smp = new SpeedMeasurePlugin()
 const mode = process.env.NODE_ENV
 const isProd = mode === 'production'
 
-module.exports = {
+module.exports = smp.wrap({
   // entry: resolve('./src/index.js'),
   entry: [// 入口文件的配置项
     "@babel/polyfill",
@@ -134,7 +134,7 @@ module.exports = {
     }), */
     new webpack.NamedModulesPlugin(), // 在热加载时直接返回更新文件名，而不是文件的id
     new webpack.HotModuleReplacementPlugin(), // 热加载
-    // new BundleAnalyzerPlugin(), // 可视化依赖体积
+    new BundleAnalyzerPlugin(), // 可视化依赖体积
     new VueLoaderPlugin(),
     new Dotenv({
       path: resolve(`./.env.${mode}`),
@@ -185,4 +185,4 @@ module.exports = {
   },
   devtool: 'inline-source-map',
   mode   //开发环境development | 生产环境production (默认值) | none
-}
+})
