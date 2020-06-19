@@ -1,6 +1,6 @@
 <template>
   <div class="bgc">
-    xxxxx
+    fcsfssffs
     <p class="base">{{name}}</p>
     <ul>
       <li v-for="item in lists" :key="item">{{item}}</li>

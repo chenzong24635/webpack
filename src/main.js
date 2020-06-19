@@ -1,3 +1,7 @@
+if(module && module.hot) {
+  module.hot.accept()
+}
+
 import Vue from 'vue'
 import App from './app'
 // import 'css/base.less'
