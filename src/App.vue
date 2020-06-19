@@ -22,6 +22,9 @@ export default {
   },
   created() {
     console.log(111);
+    console.log(new Promise((resolve, reject) => {
+        resolve(100);
+    }));
   },
   methods: {
     add() {

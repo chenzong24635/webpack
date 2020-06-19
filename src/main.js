@@ -4,6 +4,7 @@ import App from './app'
 import {a,b} from './print.js'
 a()
 let name = 'tom'
+console.log(1);
 // console.log(`i am ${name}`);
 // console.log(new Set([1]));
 // console.log([0,3,...[1,2,4,3]]);

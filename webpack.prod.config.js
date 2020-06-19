@@ -34,7 +34,9 @@ module.exports = webpackMerge(baseConfig,{
   mode: "production",
   devtool:'cheap-module-source-map',
   plugins: [
-    new CleanWebpackPlugin(), // 清理dist文件夹
+    new CleanWebpackPlugin({
+      cleanOnceBeforeBuildPatterns:['**/*', '!dll', '!dll/**'] //不删除dll目录下的文件
+    }), // 清理dist文件夹
     new MiniCssExtractPlugin({ // css文件分离
       filename: "css/[name].[contenthash:8].css",
       // chunkFilename: "css/[id].[hash:8].css",
@@ -90,11 +92,11 @@ module.exports = webpackMerge(baseConfig,{
         parallel: true, // 多进程并行运行可提高构建速度,可设置并发运行次数 (Boolean | Number) 
         cache: true, // 文件缓存
         sourceMap: true,
-        terserOptions: {
-          compress: {
-            pure_funcs: ["console.log"], // 去除console.log
-          },
-        },
+        // terserOptions: {
+        //   compress: {
+        //     pure_funcs: ["console.log"], // 去除console.log
+        //   },
+        // },
       }),
     ],
   },
