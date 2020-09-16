@@ -21,7 +21,7 @@ const isProd = mode === 'production'
 
 module.exports = {
   entry: [// 入口文件的配置项
-    "@babel/polyfill",
+    // "@babel/polyfill",
     resolve('./src/main.js')
   ],
   output: {  // 出口文件的配置

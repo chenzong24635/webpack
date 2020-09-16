@@ -1,6 +1,6 @@
-export function a() {
-    console.log('a111')
+export let fun1 = () => {
+    console.log('fun1--')
 }
-export function b() {
-    console.log('b')
+export function fun2() {
+    console.log('fun2--')
 }
