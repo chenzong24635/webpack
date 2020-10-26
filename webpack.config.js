@@ -5,6 +5,8 @@ function resolve(dir) {
   return path.resolve(__dirname, dir)
 }
 
+const MyPlugin = require('./myPlugin');
+
 const webpack = require('webpack');
 const Dotenv = require('dotenv-webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -32,8 +34,22 @@ module.exports = smp.wrap({
     filename: 'js/[name].[hash:8].js',   //添加了hash值, 实现静态资源的长期缓存
     path: resolve('dist'), //输出文件路径，必须是绝对路径
   },
+  resolveLoader: {
+    // loader路径查找顺序从左往右
+    modules: ['node_modules', './']
+  },
   module: {
     rules: [
+      /* {
+        test: /\.js$/,
+        use: {
+          loader: 'myLoader',
+          options: {
+            sourceMap: true,
+            name: 'aaa'
+          }
+        }
+      }, */
       {
         test: /\.(css|less)$/,
         include: resolve("./src"),
@@ -107,6 +123,9 @@ module.exports = smp.wrap({
     ]
   },
   plugins: [
+    new MyPlugin({
+      name:'My----Plugin'
+    }),
     new HtmlWebpackPlugin({ //输出html文件
       title: '标题',
       template: './public/index.html',
